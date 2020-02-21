@@ -16,15 +16,19 @@ import org.jsoup.select.Elements;
 import junit.framework.TestCase;
 
 public class NewsLinksExtractorAppTest extends TestCase {
+	
 	static final String URL = "https://www.prothomalo.com/";
 	static final String SAMPLE_NEWS_LINK = "https://www.prothomalo.com/topic/%E0%A6%8F%E0%A6%95%E0%A7%81%E0%A6%B6%E0%A7%87-%E0%A6%97%E0%A7%8D%E0%A6%B0%E0%A6%A8%E0%A7%8D%E0%A6%A5%E0%A6%AE%E0%A7%87%E0%A6%B2%E0%A6%BE";
 	Set<String> linksSet = new LinkedHashSet<>();
 
 	public void FetchtUrlsTest() throws IOException, InterruptedException {
 		print("Fetching %s...", URL);
+		
 		Document doc = Jsoup.connect(URL).get();
 		Elements hrefEls = doc.select("a[abs:href~=(https|http)://www.prothomalo.com/]");
+		
 		print("\nTotal Links: (%d)", hrefEls.size());
+		
 		assertEquals(201, hrefEls.size());
 	}
 
@@ -39,7 +43,9 @@ public class NewsLinksExtractorAppTest extends TestCase {
 
 		hrefEls.stream().forEach(el -> print(" * <%s>", el.attr("abs:href")));
 
-		linksSet.addAll(hrefEls.stream().filter(el -> !el.attr("abs:href").contains("/home"))
+		linksSet.addAll(
+				hrefEls.stream()
+				.filter(el -> !el.attr("abs:href").contains("/home"))
 				.filter(el -> !el.attr("abs:href").contains("/photo"))
 				.filter(el -> !el.attr("abs:href").contains("/gallery"))
 				.filter(el -> !el.attr("abs:href").contains("/video"))
@@ -69,6 +75,7 @@ public class NewsLinksExtractorAppTest extends TestCase {
 		print("\nTotal unique links: (%d)", linksSet.size());
 		print("Unique links: (%d)\n", linksSet.size());
 		linksSet.forEach(el -> print(" * <%s>", el));
+		
 		assertTrue(hrefEls.size() > linksSet.size());
 	}
 
