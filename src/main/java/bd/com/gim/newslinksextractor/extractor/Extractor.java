@@ -12,7 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * News Links extractor class. Targeted news site is <a href="https://www.prothomalo.com/">prothom alo</a>
+ * News Links extractor class.
+ * Targeted news site is <a href="https://www.prothomalo.com/">prothom alo</a>.
 
  * @author Tanbirul Hashan
  * @since 2020-02-21
@@ -21,45 +22,58 @@ public class Extractor extends AbstractExtractor{
 	private final Logger log = LoggerFactory.getLogger(getClass());
 	
 	private static final String URL = "https://www.prothomalo.com/";
+	private static final String CSS_QUERY = "a[abs:href~=(https|http)://www.prothomalo.com/]";
+	/** Set of unique links*/
 	private Set<String> linksSet = new LinkedHashSet<>();
+	/** Retry counter in case of re-trying extraction if extracting interrupted by unintended exception */
+	private int retry = 0;
 
 	public void ExtractUrls(){
 		startSiteUrlsExtracting(URL);
 	}
 	
 	@Override
-	public void extractUrlsFromSite(String siteUrl) {
+	public void extractUrlsFromSite(String siteUrl) throws IOException, InterruptedException{
 		collectUrls(siteUrl);
 		
 		String[] links = linksSet.toArray(new String[linksSet.size()]);
 		
-		for (int i = 0; i < links.length; i++) {
-			if (isNewsLink(links[i]))
-				saveLink(links[i]);
+		for (linksIterationIndx = 0; linksIterationIndx < links.length; linksIterationIndx++) {
+			if (isNewsLink(links[linksIterationIndx]))
+				saveNewsLink(links[linksIterationIndx]);
 			else {
-				collectUrls(links[i]);
+				collectUrls(links[linksIterationIndx]);
 				links = linksSet.toArray(new String[linksSet.size()]);
 			}
 		}
 
 	}
 	
-	private void collectUrls(String url){
+	private void collectUrls(String url) throws IOException, InterruptedException {
 		log.info(getFormattedMsg("Fetching \"%s\" news links", url));
 		
 		Elements hrefEls = new Elements();
 		
-		try{
+		try {
 			Document doc = Jsoup.connect(url).timeout(60 * 1000).execute().parse();
-			hrefEls = doc.select("a[abs:href~=(https|http)://www.prothomalo.com/]");
+			hrefEls = doc.select(CSS_QUERY);
 			
 			/* Sleeping to avoid frequent request which may lead to be blacklisted the ip */
-			Thread.sleep(5000l);
+			Thread.sleep(3 * 1000l);
 		} catch (IOException | InterruptedException e) {
-			
+			/* Re-trying for maximum 10 times if extracting interrupted by unintended exception */
+			if (++retry < 10) collectUrls(url);
+			else throw e;
 		}
 
-		linksSet.addAll(hrefEls.stream()
+		linksSet.addAll(getFilteredLinks(hrefEls));
+	}
+	
+	/** Filtering unusual links that does not contain any news/unique news 
+	 *  @param elements {@link Elements} instance
+	 *  @return A set of valid links that contains news */
+	private Set<String> getFilteredLinks(Elements elements) {
+		return elements.stream()
 				.filter(el -> !el.attr("abs:href").contains("/home"))
 				.filter(el -> !el.attr("abs:href").contains("/photo"))
 				.filter(el -> !el.attr("abs:href").contains("/gallery"))
@@ -86,7 +100,12 @@ public class Extractor extends AbstractExtractor{
 				.filter(el -> !el.attr("abs:href").contains("/privacy"))
 				.filter(el -> !el.attr("abs:href").contains("/terms"))
 				.map(el -> el.attr("abs:href"))
-				.collect(Collectors.toSet()));
+				.collect(Collectors.toSet());
+	}
+	
+	@Override
+	protected String[] getAllExtactedLinks() {
+		return linksSet.toArray(new String[linksSet.size()]);
 	}
 
 }
