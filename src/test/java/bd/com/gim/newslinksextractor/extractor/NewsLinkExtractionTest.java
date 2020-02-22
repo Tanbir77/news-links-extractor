@@ -1,4 +1,4 @@
-package bd.com.gim.newslinksextractor;
+package bd.com.gim.newslinksextractor.extractor;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -15,10 +15,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import bd.com.gim.newslinksextractor.PersistenceManager;
 import bd.com.gim.newslinksextractor.model.News;
 import junit.framework.TestCase;
 
-public class NewsLinksExtractorAppTest extends TestCase {
+public class NewsLinkExtractionTest extends TestCase {
 	
 	static final String URL = "https://www.prothomalo.com/";
 	static final String SAMPLE_NEWS_LINK = "https://www.prothomalo.com/topic/%E0%A6%8F%E0%A6%95%E0%A7%81%E0%A6%B6%E0%A7%87-%E0%A6%97%E0%A7%8D%E0%A6%B0%E0%A6%A8%E0%A7%8D%E0%A6%A5%E0%A6%AE%E0%A7%87%E0%A6%B2%E0%A6%BE";
