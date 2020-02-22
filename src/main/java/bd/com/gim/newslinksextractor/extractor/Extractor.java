@@ -43,7 +43,7 @@ public class Extractor extends AbstractExtractor{
 
 		for (linksArrIndx = 0; linksArrIndx < links.length; linksArrIndx++) {
 			if (isNewsLink(links[linksArrIndx]))
-				saveNewsLink(normalizeNewsUrl(links[linksArrIndx]));
+				saveNewsLink(getNormalizeNewsUrl(links[linksArrIndx]));
 			else {
 				collectUrls(links[linksArrIndx]);
 				links = linksSet.toArray(new String[linksSet.size()]);

@@ -45,7 +45,7 @@ public abstract class AbstractExtractor {
 	private void savePendingNewsLinks(String[] links) {
 		for (int i = linksArrIndx + 1; i < links.length; i++) {
 			if (isNewsLink(links[linksArrIndx]))
-				saveNewsLink(links[linksArrIndx]);
+				saveNewsLink(getNormalizeNewsUrl(links[linksArrIndx]));
 		}
 	}
 
@@ -104,7 +104,7 @@ public abstract class AbstractExtractor {
 		}
 	}
 	
-	protected String normalizeNewsUrl(String url) {
+	protected String getNormalizeNewsUrl(String url) {
 		return url.replace("#comments", "");
 	}
 
