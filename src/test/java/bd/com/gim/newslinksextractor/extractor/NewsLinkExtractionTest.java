@@ -88,7 +88,7 @@ public class NewsLinkExtractionTest extends TestCase {
 	}
 
 	public void newsLinkPatternValidityTest() {
-		assertTrue(Pattern.compile("[^#,=,?,&A-Za-z0-9]").matcher("article?page=2").find());
+		assertTrue(Pattern.compile("[^#,=,?,&A-Za-z0-9-]").matcher("%E0%A6%8F%E0%A6%95%E0%A7%81%E0%A6%B").find());
 	}
 
 	private static void print(String msg, Object... args) {
