@@ -26,7 +26,7 @@ public abstract class AbstractExtractor {
 	/** News links saved count */
 	private int savedCount = 0;
 	/** Store the links iteration index to track last saved news index */
-	protected int linksIterationIndx = 0;
+	protected int linksArrIndx = 0;
 
 	protected void startSiteUrlsExtracting(String siteUrl) {
 		log.info(String.format("Launched extractor: Fetching \"%s\" news urls", siteUrl));
@@ -43,24 +43,30 @@ public abstract class AbstractExtractor {
 	}
 
 	private void savePendingNewsLinks(String[] links) {
-		for (int i = linksIterationIndx + 1; i < links.length; i++) {
-			if (isNewsLink(links[linksIterationIndx]))
-				saveNewsLink(links[linksIterationIndx]);
+		for (int i = linksArrIndx + 1; i < links.length; i++) {
+			if (isNewsLink(links[linksArrIndx]))
+				saveNewsLink(links[linksArrIndx]);
 		}
-
 	}
 
 	protected void saveNewsLink(String url) {
 		if (newsServ == null)
 			newsServ = new NewsServiceImpl();
 
-		if (newsServ.insert(getPreparedEntity(url)) != null) {
-			savedCount++;
-			if (log.isTraceEnabled())
-				log.trace(String.format("News [%d]. \"%s\" saved", savedCount, url));
+		if (!isNewsInDb(url)) {
+			if (newsServ.insert(getPreparedEntity(url)) != null) {
+				savedCount++;
+				if (log.isTraceEnabled())
+					log.trace(String.format("News [%d]. \"%s\" saved", savedCount, url));
+			}
+			
 		}
 	}
-
+	
+	protected boolean isNewsInDb(String url) {
+		return newsServ.isNewsExistsInDB(url);
+	}
+	
 	/**
 	 * Check if a link is a news link or not. Typically, all news links are encoded.
 	 * 
@@ -76,7 +82,7 @@ public abstract class AbstractExtractor {
 	}
 
 	private boolean hasEncodedChars(String str) {
-		return Pattern.compile("[^#A-Za-z0-9-?=]").matcher(str).find();
+		return Pattern.compile("[^#,=,?,&A-Za-z0-9-]").matcher(str).find();
 	}
 
 	private News getPreparedEntity(String url) {
@@ -84,7 +90,7 @@ public abstract class AbstractExtractor {
 		return new News()
 				.setCategory(parts[3])
 				.setTitleSum(getDecodedStr(parts[parts.length - 1]))
-				.setUrl(url.replace("#comments", ""));
+				.setUrl(url);
 	}
 
 	private String getDecodedStr(String str) {
@@ -96,6 +102,10 @@ public abstract class AbstractExtractor {
 			log.warn(String.format("\"%s\" failed to decode", str), e);
 			return null;
 		}
+	}
+	
+	protected String normalizeNewsUrl(String url) {
+		return url.replace("#comments", "");
 	}
 
 	protected abstract void extractUrlsFromSite(String siteUrl) throws IOException, InterruptedException;

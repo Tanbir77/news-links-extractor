@@ -41,11 +41,11 @@ public class Extractor extends AbstractExtractor{
 
 		String[] links = linksSet.toArray(new String[linksSet.size()]);
 
-		for (linksIterationIndx = 0; linksIterationIndx < links.length; linksIterationIndx++) {
-			if (isNewsLink(links[linksIterationIndx]))
-				saveNewsLink(links[linksIterationIndx]);
+		for (linksArrIndx = 0; linksArrIndx < links.length; linksArrIndx++) {
+			if (isNewsLink(links[linksArrIndx]))
+				saveNewsLink(normalizeNewsUrl(links[linksArrIndx]));
 			else {
-				collectUrls(links[linksIterationIndx]);
+				collectUrls(links[linksArrIndx]);
 				links = linksSet.toArray(new String[linksSet.size()]);
 			}
 		}
