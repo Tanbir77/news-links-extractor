@@ -1,8 +1,8 @@
-CREATE USER'gim_user'@'localhost'IDENTIFIED BY'12345Gim';
+CREATE USER'gim_user77'@'localhost'IDENTIFIED BY'12345Gim';
 
 CREATE DATABASE prothom_alo_news;
 
-GRANT ALL ON prothom_alo_news.* TO 'gim_user'@'localhost' IDENTIFIED BY '12345Gim' WITH GRANT OPTION;
+GRANT ALL ON prothom_alo_news.* TO 'gim_user77'@'localhost' IDENTIFIED BY '12345Gim' WITH GRANT OPTION;
 
 
 

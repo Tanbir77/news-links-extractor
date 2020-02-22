@@ -16,8 +16,9 @@ public enum PersistenceManager {
 		emFactory = Persistence.createEntityManagerFactory("news-links-extractor");
 	}
 
-	public void initEntityManager() {
+	public EntityManager initEntityManager() {
 		em = emFactory.createEntityManager();
+		return em;
 	}
 	
 	public EntityManager getEntityManager() {
