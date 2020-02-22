@@ -87,9 +87,8 @@ public class NewsLinkExtractionTest extends TestCase {
 		System.out.println(URLDecoder.decode(SAMPLE_NEWS_LINK, StandardCharsets.UTF_8.toString()));
 	}
 
-	public void newsLinkValidityTest() {
-		String[] parts = SAMPLE_NEWS_LINK.split("/");
-		assertTrue(parts.length > 4 && Pattern.compile("[^#A-Za-z0-9-]").matcher(parts[parts.length - 1]).find());
+	public void newsLinkPatternValidityTest() {
+		assertTrue(Pattern.compile("[^#,=,?,&A-Za-z0-9]").matcher("article?page=2").find());
 	}
 
 	private static void print(String msg, Object... args) {
