@@ -21,7 +21,7 @@ public class News {
   @Column(name="news_title_sum", nullable=false)
   private String titleSum;
   
-  @Column(name="news_category", nullable=false)
+  @Column(name="news_category", nullable=true)
   private String category;
   
   @Column(name="news_url", nullable=false)

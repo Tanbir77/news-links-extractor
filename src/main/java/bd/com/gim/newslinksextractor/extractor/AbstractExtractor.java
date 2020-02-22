@@ -37,7 +37,8 @@ public abstract class AbstractExtractor {
 			log.info(String.format("Saving all pending extracted news links....."));
 			savePendingNewsLinks(getAllExtactedLinks());
 		} finally {
-			log.info(String.format("Extractor exited. %d news links are saved: ", savedCount));
+			log.info("Extractor exited");
+			log.info(String.format("%d news links from %d links are saved: ", savedCount,getAllExtactedLinks().length));
 		}
 	}
 
@@ -53,10 +54,11 @@ public abstract class AbstractExtractor {
 		if (newsServ == null)
 			newsServ = new NewsServiceImpl();
 
-		if (newsServ.insert(getPreparedEntity(url)) != null)
+		if (newsServ.insert(getPreparedEntity(url)) != null) {
+			savedCount++;
 			if (log.isTraceEnabled())
-				log.trace(String.format("News [%d]. \"%s\" saved", ++savedCount, url));
-
+				log.trace(String.format("News [%d]. \"%s\" saved", savedCount, url));
+		}
 	}
 
 	/**
@@ -74,7 +76,7 @@ public abstract class AbstractExtractor {
 	}
 
 	private boolean hasEncodedChars(String str) {
-		return Pattern.compile("[^#A-Za-z0-9-]").matcher(str).find();
+		return Pattern.compile("[^#A-Za-z0-9-?=]").matcher(str).find();
 	}
 
 	private News getPreparedEntity(String url) {
@@ -82,12 +84,14 @@ public abstract class AbstractExtractor {
 		return new News()
 				.setCategory(parts[3])
 				.setTitleSum(getDecodedStr(parts[parts.length - 1]))
-				.setUrl(url);
+				.setUrl(url.replace("#comments", ""));
 	}
 
 	private String getDecodedStr(String str) {
 		try {
-			return URLDecoder.decode(str, StandardCharsets.UTF_8.toString()).replace("-", " ");
+			return URLDecoder.decode(str, StandardCharsets.UTF_8.toString())
+					.replace("-", " ")
+					.replace("#comments", "");
 		} catch (UnsupportedEncodingException e) {
 			log.warn(String.format("\"%s\" failed to decode", str), e);
 			return null;
