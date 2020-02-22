@@ -8,5 +8,6 @@ import bd.com.gim.newslinksextractor.model.News;
  * @since 2020-02-22
  */
 public interface NewsService{
-	News insert(News ob); 
+	News insert(News ob);
+	boolean isNewsExistsInDB(String url); 
 }

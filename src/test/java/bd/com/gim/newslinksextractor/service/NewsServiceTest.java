@@ -12,12 +12,24 @@ public class NewsServiceTest extends TestCase {
 	static final String SAMPLE_NEWS_LINK = "https://www.prothomalo.com/topic/%E0%A6%8F%E0%A6%95%E0%A7%81%E0%A6%B6%E0%A7%87-%E0%A6%97%E0%A7%8D%E0%A6%B0%E0%A6%A8%E0%A7%8D%E0%A6%A5%E0%A6%AE%E0%A7%87%E0%A6%B2%E0%A6%BE";
 	private static NewsService ns;
 
-	public void insert() throws UnsupportedEncodingException {
+	public void insertTest() throws UnsupportedEncodingException {
 		ns = new NewsServiceImpl();
 		
 		PersistenceManager.INSTANCE.initEntityManager();
 
 		assertNotNull(ns.insert(getPreparedNews()));
+		
+		PersistenceManager.INSTANCE.getEntityManager().close();
+		PersistenceManager.INSTANCE.close();
+
+	}
+	
+	public void isNewsExistsInDbTest() throws UnsupportedEncodingException {
+		ns = new NewsServiceImpl();
+		
+		PersistenceManager.INSTANCE.initEntityManager();
+
+		assertTrue(ns.isNewsExistsInDB(getPreparedNews().getUrl()));
 		
 		PersistenceManager.INSTANCE.getEntityManager().close();
 		PersistenceManager.INSTANCE.close();
