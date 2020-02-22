@@ -77,8 +77,9 @@ public abstract class AbstractExtractor {
 		String[] parts = url.split("/");
 		if (parts[parts.length - 1].trim().isEmpty())
 			return false;
-		else
-			return parts.length > 4 && hasEncodedChars(parts[parts.length - 1]);
+		else if(parts[parts.length - 1].contains("="))
+			return false;
+		return parts.length > 4 && hasEncodedChars(parts[parts.length - 1]);
 	}
 
 	private boolean hasEncodedChars(String str) {
