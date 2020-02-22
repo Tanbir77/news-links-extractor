@@ -1,7 +1,9 @@
 # news-links-extractor
-**Run the application on your local machine**
+**To Run the application on your local machine**
 
-1. Clone the repository
+Execute following commands
+
+1. ```git clone https://github.com/Tanbir77/news-links-extractor.git```
 2. ```cd news-links-extractor```
 3. ```mysql -u root -p  < src/main/resources/db_script.sql```
 4. ```./mvnw clean compile```
