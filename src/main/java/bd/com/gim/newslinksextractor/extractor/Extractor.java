@@ -20,24 +20,27 @@ import org.slf4j.LoggerFactory;
  */
 public class Extractor extends AbstractExtractor{
 	private final Logger log = LoggerFactory.getLogger(getClass());
-	
+
 	private static final String URL = "https://www.prothomalo.com/";
 	private static final String CSS_QUERY = "a[abs:href~=(https|http)://www.prothomalo.com/]";
-	/** Set of unique links*/
+	/** Set of unique links */
 	private Set<String> linksSet = new LinkedHashSet<>();
-	/** Retry counter in case of re-trying extraction if extracting interrupted by unintended exception */
+	/**
+	 * Retry counter in case of re-trying extraction if extracting interrupted by
+	 * unintended exception
+	 */
 	private int retry = 0;
 
-	public void ExtractUrls(){
+	public void ExtractUrls() {
 		startSiteUrlsExtracting(URL);
 	}
-	
+
 	@Override
-	public void extractUrlsFromSite(String siteUrl) throws IOException, InterruptedException{
+	public void extractUrlsFromSite(String siteUrl) throws IOException, InterruptedException {
 		collectUrls(siteUrl);
-		
+
 		String[] links = linksSet.toArray(new String[linksSet.size()]);
-		
+
 		for (linksIterationIndx = 0; linksIterationIndx < links.length; linksIterationIndx++) {
 			if (isNewsLink(links[linksIterationIndx]))
 				saveNewsLink(links[linksIterationIndx]);
@@ -48,22 +51,24 @@ public class Extractor extends AbstractExtractor{
 		}
 
 	}
-	
+
 	private void collectUrls(String url) throws IOException, InterruptedException {
-		log.info(getFormattedMsg("Fetching \"%s\" news links", url));
-		
+		log.info(String.format("Fetching \"%s\" news links", url));
+
 		Elements hrefEls = new Elements();
-		
+
 		try {
 			Document doc = Jsoup.connect(url).timeout(60 * 1000).execute().parse();
 			hrefEls = doc.select(CSS_QUERY);
-			
-			/* Sleeping to avoid frequent request which may lead to be blacklisted the ip */
+
+			/* Sleeping to avoid frequent request which will prevent from IP blacklisting */
 			Thread.sleep(3 * 1000l);
 		} catch (IOException | InterruptedException e) {
-			/* Re-trying for maximum 10 times if extracting interrupted by unintended exception */
-			if (++retry < 10) collectUrls(url);
-			else throw e;
+			/*Re-trying for maximum 10 times if extraction interrupted by unintended exception */
+			if (++retry < 10)
+				collectUrls(url);
+			else
+				throw e;
 		}
 
 		linksSet.addAll(getFilteredLinks(hrefEls));
