@@ -8,7 +8,7 @@ http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 		<properties>
 			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/prothom_alo_news" />
-			<property name="javax.persistence.jdbc.user" value="gim_user" />
+			<property name="javax.persistence.jdbc.user" value="gim_user77" />
 			<property name="javax.persistence.jdbc.password" value="12345Gim" />
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
 			<property name="hibernate.show_sql" value="true" />

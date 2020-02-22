@@ -10,13 +10,18 @@ import javax.persistence.Persistence;
 public enum PersistenceManager {
 	INSTANCE;
 	private EntityManagerFactory emFactory;
+	private EntityManager em;
 
 	private PersistenceManager() {
 		emFactory = Persistence.createEntityManagerFactory("news-links-extractor");
 	}
 
+	public void initEntityManager() {
+		em = emFactory.createEntityManager();
+	}
+	
 	public EntityManager getEntityManager() {
-		return emFactory.createEntityManager();
+		return em;
 	}
 
 	public void close() {
