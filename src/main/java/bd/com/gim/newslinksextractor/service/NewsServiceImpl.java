@@ -23,15 +23,16 @@ public class NewsServiceImpl implements NewsService {
 	public News insert(News ob) {
 		try {
 			em = PersistenceManager.INSTANCE.getEntityManager();
-			em.getTransaction().begin();
+			if (!em.getTransaction().isActive())
+				em.getTransaction().begin();
 			em.persist(ob);
 			em.getTransaction().commit();
 			return ob;
 		} catch (IllegalStateException | PersistenceException | IllegalArgumentException e) {
 			log.warn(String.format("\"%s\" failed to save", ob.getUrl()), e);
+			em.getTransaction().rollback();
 			return null;
 		}
-
 	}
 
 }
